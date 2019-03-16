@@ -1,42 +1,64 @@
-#include <stdio.h>
+#include<stdio.h>
 
 typedef struct listnode *listptr;
 typedef struct listnode {
-	listptr llink;
+	listptr leftside, rightside;
 	int data;
-	listptr rlink;
 };
 
-void insert() {
-	listptr node, newnode;
-	node = (struct listnode*)malloc(sizeof(struct listnode));
-	newnode = (struct listnode*)malloc(sizeof(struct listnode));
-
-	newnode->llink = node->rlink;
-	newnode->rlink = node->rlink->llink;
-	node->rlink = newnode;
-	node->rlink->llink = newnode;
-
-	return;
+void inorder(listptr x) {
+	if (x) {
+		inorder(x->leftside);
+		printf("%d", x->data);
+		inorder(x->rightside);
+	}
 }
 
-void delete() {
-	listptr node;
-	node = (struct listnode*)malloc(sizeof(struct listnode));
-
-	node->llink->rlink = node->rlink;
-	node->rlink->llink = node->llink;
-	free(node);
-
-	return;
+void preorder(listptr x) {
+	if (x) {
+		printf("%d", x->data);
+		preorder(x->leftside);
+		preorder(x->rightside);
+	}
 }
 
-int main() {
-	int x;
-	printf("select number \n number1 is insert node \n number2 is delete node ");
-	scanf_s("%d", &x);
-	if (x == 1)
-		insert();
-	if (x == 2)
-		delete();
+void postorder(listptr x) {
+	if (x) {
+		postorder(x->leftside);
+		postorder(x->rightside);
+		printf(x->data);
+	}
+}
+
+void level(listptr x) {
+	if (!x)
+		return;
+	for (;;) {
+		x = deleteq();
+		if (x) {
+			printf("%d", x->data);
+			if (x->leftside)
+				addq(x->leftside);
+			if (x->rightside)
+				add(x->rightside);
+		}
+		break;
+	}
+}
+
+listptr copy(listptr x) {
+	listptr temp;
+	temp = (struct listnode*)malloc(sizeof(struct listnode));
+	if (x) {
+		temp->data = copy(x->data);
+		temp->leftside = copy(x->leftside);
+		temp->rightside = copy(x->rightside);
+		return temp;
+	} return;
+
+}
+
+int equal(listptr x, listptr y) {
+		return (x == NULL&&y == NULL) || (x != NULL&&y != NULL) &&
+		(x->data == y->data) && equal(x->leftside,y->leftside) && equal(x->rightside,y->rightside);
 }
